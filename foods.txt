@@ -4,3 +4,4 @@ sauerkraut
 sauerteig
 yoghurt
 kefir
+sojasauce
