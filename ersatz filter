@@ -1,0 +1,63 @@
+import os
+import pandas as pd
+from qiime2 import Visualization
+import matplotlib.pyplot as plt
+import numpy as np
+
+import qiime2 as q2
+
+%matplotlib inline
+
+Data_raw = 'Data/raw'
+Data_classified = 'Data/classified'
+Data_visualization = 'Data/visualization'
+
+! qiime taxa barplot \
+  --i-table $Data_raw/modified-dada1-table-highschool.qza \
+  --i-taxonomy $Data_classified/taxonomy.qza \
+  --m-metadata-file $Data_raw/20250913_metadata_ITS.tsv \
+  --o-visualization $Data_classified/taxa-barplot.qzv
+  Visualization.load(f"{Data_classified}/taxa-barplot.qzv")
+
+  
+
+  ! qiime feature-table summarize \
+  --i-table $Data_raw/modified-dada1-table-highschool.qza \
+  --o-visualization $Data_visualization/modified-dada1-table-highschool.qzv
+  Visualization.load(f"{Data_visualization}/modified-dada1-table-highschool.qzv")
+
+  ! qiime taxa filter-table \
+    --i-table $Data_raw/modified-dada1-table-highschool.qza \
+    --i-taxonomy $Data_classified/taxonomy.qza \
+    --p-exclude mitochondria,chloroplast \
+    --p-include "k__Fungi" \
+    --o-filtered-table $Data_classified/table-filtered.qza
+    ! qiime feature-table summarize \
+  --i-table $Data_classified/table-filtered.qza \
+  --o-visualization $Data_classified/table-filtered.qzv
+Visualization.load(f"{Data_classified}/table-filtered.qzv")
+
+
+
+
+Visualization.load(f"{Data_visualization}/filtered-dada1-rep-seqs-highschool.qzv")
+
+! qiime taxa filter-seqs \
+    --i-sequences $Data_raw/filtered-dada1-rep-seqs-highschool.qza \
+    --i-taxonomy $Data_classified/taxonomy.qza \
+    --p-exclude mitochondria,chloroplast \
+    --p-include "k__Fungi" \
+    --o-filtered-sequences $Data_classified/rep-seqs-filtered.qza
+    ! qiime feature-table tabulate-seqs \
+  --i-data $Data_classified/rep-seqs-filtered.qza \
+  --o-visualization $Data_classified/rep-seqs-filtered.qzv
+Visualization.load(f"{Data_classified}/rep-seqs-filtered.qzv")
+
+
+
+! qiime taxa barplot \
+  --i-table $Data_classified/table-filtered.qza \
+  --i-taxonomy $Data_classified/taxonomy.qza \
+  --m-metadata-file $Data_raw/20250913_metadata_ITS.tsv \
+  --o-visualization $Data_classified/taxa-barplot-filtered.qzv
+  Visualization.load(f"{Data_classified}/taxa-barplot-filtered.qzv")
